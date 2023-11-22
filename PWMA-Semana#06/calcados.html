@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <title>SSS - Street Style Studio</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="estilo1.css">
+</head>
+<body>
+    <header>
+        <img src="logo2.png" alt="Logo" width="200" height="200">
+    </header>
+    <nav>
+        <h1>
+            <a href="index.html">Menu</a> &nbsp;
+            <a href="camisetas.html">Camisetas</a> &nbsp;
+            <a href="login.html">Login</a>
+        </h1> 
+    </nav>
+    <main>
+        <h2>Clientes</h2>
+        <!-- Tabela de Clientes (estrutura básica) -->
+        <table id="tabelaClientes">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Email</th>
+                    <th>Telefone</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Linhas da tabela serão adicionadas dinamicamente aqui -->
+            </tbody>
+        </table>
+
+        <!-- Adicione este formulário para criar um novo cliente -->
+        <form id="formNovoCliente">
+            <label for="nome">Nome:</label>
+            <input type="text" id="nome" name="nome" required>
+
+            <!-- Adicione outros campos do cliente conforme necessário -->
+
+            <button type="button" onclick="adicionarCliente()">Adicionar Cliente</button>
+        </form>
+    </main>
+    <footer>
+        Instagram | Twitter | Email
+    </footer>
+
+    <script>
+        // Recupere os dados do localStorage se existirem, caso contrário, use dados de exemplo
+        let clientes = JSON.parse(localStorage.getItem('clientes')) || [
+            { id: 1, nome: 'Fulano de Tal', email: 'fulano@example.com', telefone: '123-456-7890' },
+            { id: 2, nome: 'Ciclano da Silva', email: 'ciclano@example.com', telefone: '987-654-3210' },
+            // ... outros clientes
+        ];
+
+        // Função para adicionar dinamicamente as linhas à tabela
+        function popularTabela() {
+            const tabela = document.getElementById('tabelaClientes');
+            const tbody = tabela.getElementsByTagName('tbody')[0];
+
+            // Limpe a tabela antes de popular novamente
+            tbody.innerHTML = '';
+
+            clientes.forEach(cliente => {
+                const row = tbody.insertRow();
+                const { id, nome, email, telefone } = cliente;
+
+                row.insertCell(0).innerText = id;
+                row.insertCell(1).innerText = nome;
+                row.insertCell(2).innerText = email;
+                row.insertCell(3).innerText = telefone;
+
+                // Adicione um botão de ação para editar o cliente
+                const btnEditar = document.createElement('button');
+                btnEditar.innerText = 'Editar';
+                btnEditar.addEventListener('click', () => editarCliente(id));
+                row.insertCell(4).appendChild(btnEditar);
+
+                // Adicione um botão de ação para excluir o cliente
+                const btnExcluir = document.createElement('button');
+                btnExcluir.innerText = 'Excluir';
+                btnExcluir.addEventListener('click', () => excluirCliente(id));
+                row.insertCell(5).appendChild(btnExcluir);
+            });
+        }
+
+        // Função para adicionar um novo cliente
+function adicionarCliente() {
+    const novoNome = prompt('Informe o nome do cliente:');
+    const novoEmail = prompt('Informe o email do cliente:');
+    const novoTelefone = prompt('Informe o telefone do cliente:');
+
+    // Verifique se os dados foram fornecidos
+    if (!novoNome || !novoEmail || !novoTelefone) {
+        alert('Por favor, forneça todas as informações do cliente.');
+        return;
+    }
+
+    // Gere um ID único para o novo cliente
+    const novoCliente = {
+        id: clientes.length + 1,
+        nome: novoNome,
+        email: novoEmail,
+        telefone: novoTelefone,
+        // Adicione outros campos conforme necessário
+    };
+
+    // Adicione o novo cliente ao array
+    clientes.push(novoCliente);
+
+    // Atualize o localStorage com os novos dados
+    localStorage.setItem('clientes', JSON.stringify(clientes));
+
+    // Atualize a tabela
+    popularTabela();
+}
+
+        // Função para editar um cliente
+function editarCliente(id) {
+    const clienteParaEditar = clientes.find(cliente => cliente.id === id);
+
+    if (!clienteParaEditar) {
+        console.error(`Cliente com ID ${id} não encontrado para edição.`);
+        return;
+    }
+
+    // Lógica para editar todas as informações do cliente
+    const novoNome = prompt(`Editar nome de ${clienteParaEditar.nome}:`, clienteParaEditar.nome);
+    const novoEmail = prompt(`Editar email de ${clienteParaEditar.email}:`, clienteParaEditar.email);
+    const novoTelefone = prompt(`Editar telefone de ${clienteParaEditar.telefone}:`, clienteParaEditar.telefone);
+
+    // Atualize as informações do cliente se não forem nulas
+    if (novoNome !== null) {
+        clienteParaEditar.nome = novoNome;
+    }
+    if (novoEmail !== null) {
+        clienteParaEditar.email = novoEmail;
+    }
+    if (novoTelefone !== null) {
+        clienteParaEditar.telefone = novoTelefone;
+    }
+
+    // Atualize o localStorage com os novos dados
+    localStorage.setItem('clientes', JSON.stringify(clientes));
+
+    // Atualize a tabela após a edição
+    popularTabela();
+}
+
+        // Função para excluir um cliente
+        // Função para excluir um cliente
+function excluirCliente(id) {
+    // Lógica para excluir um cliente com o ID fornecido
+    clientes = clientes.filter(cliente => cliente.id !== id);
+
+    // Atualize o localStorage com os novos dados
+    localStorage.setItem('clientes', JSON.stringify(clientes));
+
+    // Atualize a tabela após a exclusão
+    popularTabela();
+}
+
+        // Inicialize a tabela quando a página carregar
+        window.onload = popularTabela;
+    </script>
+</body>
+</html>
